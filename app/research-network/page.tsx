@@ -6,23 +6,25 @@ import { BibliographicCitation } from "@/components/bibliographic-citation"
 import { buildResearchNetwork } from "@/lib/network-service"
 import { redirect } from "next/navigation"
 import { NetworkMethodToggle } from "@/components/network-method-toggle"
+import Link from "next/link"
 
 interface ResearchNetworkPageProps {
-  searchParams: {
+  searchParams: Promise<{
     anchor?: string
     related?: string
     useMatching?: string
     useRepositoryData?: string
     expandSecondLevel?: string
-  }
+  }>
 }
 
 export default async function ResearchNetworkPage({ searchParams }: ResearchNetworkPageProps) {
-  const anchorDoi = searchParams.anchor
-  const relatedDoi = searchParams.related
-  const useMatching = searchParams.useMatching !== "false" // Default to true, only false if explicitly set
-  const useRepositoryData = searchParams.useRepositoryData === "true" // Default to false, only true if explicitly set
-  const expandSecondLevel = searchParams.expandSecondLevel === "true" // Default to false
+  const params = await searchParams
+  const anchorDoi = params.anchor
+  const relatedDoi = params.related
+  const useMatching = params.useMatching !== "false" // Default to true, only false if explicitly set
+  const useRepositoryData = params.useRepositoryData === "true" // Default to false, only true if explicitly set
+  const expandSecondLevel = params.expandSecondLevel === "true" // Default to false
 
   if (!anchorDoi) {
     redirect("/")
@@ -43,12 +45,12 @@ export default async function ResearchNetworkPage({ searchParams }: ResearchNetw
         <div className="max-w-7xl mx-auto">
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <a href="/" className="inline-block mb-4">
+              <Link href="/" className="inline-block mb-4">
                 <Button variant="outline">
                   <ArrowLeftIcon className="mr-2 h-4 w-4" />
                   Back to Search
                 </Button>
-              </a>
+              </Link>
               <h1 className="text-2xl font-bold">Research Network Visualization</h1>
               <p className="text-muted-foreground">
                 Explore the network of research outputs connected to this publication
@@ -84,18 +86,23 @@ export default async function ResearchNetworkPage({ searchParams }: ResearchNetw
       <div className="min-h-screen p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6">
-            <a href="/" className="inline-block mb-4">
+            <Link href="/" className="inline-block mb-4">
               <Button variant="outline">
                 <ArrowLeftIcon className="mr-2 h-4 w-4" />
                 Back to Search
               </Button>
-            </a>
+            </Link>
             <h1 className="text-2xl font-bold">Research Network Visualization</h1>
           </div>
 
           <div className="bg-destructive/10 text-destructive p-6 rounded-md">
             <h2 className="text-lg font-semibold mb-2">Error Loading Research Network</h2>
             <p>There was a problem building the research network visualization. Please try again later.</p>
+            {process.env.NODE_ENV === "development" && (
+              <pre className="mt-4 text-sm overflow-auto">
+                {error instanceof Error ? error.message : "Unknown error"}
+              </pre>
+            )}
           </div>
         </div>
       </div>
