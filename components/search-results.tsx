@@ -15,13 +15,13 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { FormattedTitle } from "@/components/formatted-title"
+import Link from "next/link"
 
 interface SearchResultsProps {
   results: ArticleMatch[]
 }
 
 export function SearchResults({ results }: SearchResultsProps) {
-  // Add this helper function at the top of the component
   const shouldDisableEnhancedMatching = (results: ArticleMatch[]) => {
     return results.some((match) => match.confidenceLevel === "Very High")
   }
@@ -52,7 +52,6 @@ export function SearchResults({ results }: SearchResultsProps) {
 
   const getPublicationBadge = (publication: Publication) => {
     if (publication.typeLabel) {
-      // Use the type label if available
       return (
         <Badge
           variant="outline"
@@ -84,7 +83,6 @@ export function SearchResults({ results }: SearchResultsProps) {
   }
 
   const PublicationDetails = ({ publication }: { publication: Publication }) => {
-    // Check if we have a valid publication with title
     if (!publication || !publication.title || publication.title === "Unknown Title") {
       return (
         <div className="space-y-2">
@@ -164,10 +162,8 @@ export function SearchResults({ results }: SearchResultsProps) {
     )
   }
 
-  // Check if all results have low confidence (indicating no LLM processing)
   const allLowConfidence = results.every((match) => match.confidenceLevel === "Low")
 
-  // Handle empty results
   if (!results || results.length === 0) {
     return (
       <div className="mt-6 p-8 text-center text-muted-foreground">No results found. Try a different search term.</div>
@@ -186,12 +182,10 @@ export function SearchResults({ results }: SearchResultsProps) {
 
       <div className="space-y-6">
         {results.map((match, index) => {
-          // Determine if this match is high confidence and has both source and match
           const isHighConfidence = match.confidenceLevel === "High" || match.confidenceLevel === "Very High"
           const hasMatch = !!match.match
           const showConfirmButton = isHighConfidence && hasMatch
 
-          // Create URL parameters for the comparison page
           const sourceDoi = match.source.doi
           const matchDoi = match.match?.doi
           const comparisonUrl =
@@ -199,7 +193,6 @@ export function SearchResults({ results }: SearchResultsProps) {
               ? `/compare?source=${encodeURIComponent(sourceDoi)}&match=${encodeURIComponent(matchDoi)}&confidence=${encodeURIComponent(match.confidenceLevel)}`
               : null
 
-          // In the component, update the Research Network button URLs to disable enhanced matching when we have Very High confidence:
           const disableEnhanced = shouldDisableEnhancedMatching(results)
 
           return (
@@ -212,21 +205,19 @@ export function SearchResults({ results }: SearchResultsProps) {
 
                 <PublicationDetails publication={match.source} />
 
-                {/* Add Research Network button for source publication */}
                 {match.source.doi && (
                   <div className="mt-2 flex justify-end">
-                    <a
+                    <Link
                       href={`/research-network?anchor=${encodeURIComponent(match.source.doi)}&useMatching=${!disableEnhanced}`}
-                      className="inline-block"
                     >
                       <Button
                         variant="outline"
-                        className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border-indigo-200"
+                        className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-400 dark:border-indigo-800"
                       >
                         <NetworkIcon className="mr-2 h-4 w-4" />
                         View Research Network
                       </Button>
-                    </a>
+                    </Link>
                   </div>
                 )}
 
@@ -242,21 +233,19 @@ export function SearchResults({ results }: SearchResultsProps) {
 
                     <PublicationDetails publication={match.match} />
 
-                    {/* Add Research Network button for matched publication */}
                     {match.match.doi && (
                       <div className="mt-2 flex justify-end">
-                        <a
+                        <Link
                           href={`/research-network?anchor=${encodeURIComponent(match.match.doi)}&useMatching=${!disableEnhanced}`}
-                          className="inline-block"
                         >
                           <Button
                             variant="outline"
-                            className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border-indigo-200"
+                            className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-400 dark:border-indigo-800"
                           >
                             <NetworkIcon className="mr-2 h-4 w-4" />
                             View Research Network
                           </Button>
-                        </a>
+                        </Link>
                       </div>
                     )}
                   </>
@@ -264,12 +253,12 @@ export function SearchResults({ results }: SearchResultsProps) {
 
                 {showConfirmButton && comparisonUrl && (
                   <div className="mt-4 flex justify-end gap-2">
-                    <a href={comparisonUrl} className="inline-block">
+                    <Link href={comparisonUrl}>
                       <Button className="bg-blue-600 hover:bg-blue-700">
                         <ArrowsRightLeftIcon className="mr-2 h-4 w-4" />
                         Compare Match
                       </Button>
-                    </a>
+                    </Link>
                   </div>
                 )}
               </CardContent>
