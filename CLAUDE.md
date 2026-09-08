@@ -64,6 +64,16 @@ Non-DOI relation targets get a placeholder node (`createPlaceholderNode`) that f
 
 ### Next.js 16 note
 
-`searchParams` on page components must be typed as a `Promise` and awaited (see `app/research-network/page.tsx`) — this was a real regression fixed in commit `7e24621`. `app/compare/page.tsx` still destructures `searchParams` synchronously; if you touch that file, check whether it needs the same `await searchParams` fix.
+`searchParams` on page components must be typed as a `Promise` and awaited (see `app/research-network/page.tsx` and `app/compare/page.tsx`) — this was a real regression first fixed in commit `7e24621`; a second instance in `app/compare/page.tsx` was missed and fixed later. If you add a new page that reads `searchParams`, use the same `Promise<...>` + `await` pattern.
 
 Publication data normalization (`convertToPub`/`safeConvertToPub`/`sanitizePublication` converting a CrossRef `work` object into the app's `Publication` type) is duplicated near-verbatim across `lib/search-service.ts`, `app/api/publication/route.ts`, and `app/compare/actions.ts` rather than shared — be aware when fixing a CrossRef-parsing bug that it likely needs the same fix in more than one place.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
