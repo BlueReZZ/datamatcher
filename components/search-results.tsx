@@ -182,9 +182,12 @@ export function SearchResults({ results }: SearchResultsProps) {
 
       <div className="space-y-6">
         {results.map((match, index) => {
-          const isHighConfidence = match.confidenceLevel === "High" || match.confidenceLevel === "Very High"
+          const isConfidentEnoughToCompare =
+            match.confidenceLevel === "High" ||
+            match.confidenceLevel === "Very High" ||
+            match.confidenceLevel === "Medium"
           const hasMatch = !!match.match
-          const showConfirmButton = isHighConfidence && hasMatch
+          const showConfirmButton = isConfidentEnoughToCompare && hasMatch
 
           const sourceDoi = match.source.doi
           const matchDoi = match.match?.doi
