@@ -21,11 +21,12 @@ import { FormattedTitle } from "@/components/formatted-title"
 export default async function ComparePage({
   searchParams,
 }: {
-  searchParams: { source?: string; match?: string; confidence?: string }
+  searchParams: Promise<{ source?: string; match?: string; confidence?: string }>
 }) {
-  const sourceDoi = searchParams.source
-  const matchDoi = searchParams.match
-  const confidenceLevel = searchParams.confidence || "High"
+  const params = await searchParams
+  const sourceDoi = params.source
+  const matchDoi = params.match
+  const confidenceLevel = params.confidence || "High"
 
   if (!sourceDoi || !matchDoi) {
     return (
@@ -61,7 +62,7 @@ export default async function ComparePage({
     error = "Failed to load publication details"
   }
 
-  if (error) {
+  if (error || !sourcePublication || !matchPublication) {
     return (
       <div className="min-h-screen p-8">
         <div className="max-w-6xl mx-auto">
@@ -73,7 +74,7 @@ export default async function ComparePage({
           </a>
           <Card className="bg-destructive/10 text-destructive">
             <CardContent className="p-6">
-              <p>{error}</p>
+              <p>{error || "Failed to load publication details"}</p>
             </CardContent>
           </Card>
         </div>
