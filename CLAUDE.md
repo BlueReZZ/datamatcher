@@ -12,16 +12,16 @@ This codebase originates from v0.app (see `generator: 'v0.app'` in `app/layout.t
 
 Package manager is **pnpm** (`pnpm-lock.yaml` is present, use pnpm not npm/yarn).
 
-`package.json` has **no `scripts` block** — run Next.js directly:
-
 ```bash
 pnpm install
 pnpm exec next dev      # dev server
 pnpm exec next build    # production build
 pnpm exec next start    # run a production build
+pnpm test               # run the vitest suite once
+pnpm test:watch         # vitest in watch mode
 ```
 
-There is no lint script, no test runner, and no test files anywhere in the repo. Don't assume `pnpm lint` / `pnpm test` exist.
+There is no lint script. Tests live under `tests/` and run with Vitest (`vitest.config.mts`) — they call `lib/` functions directly (e.g. `searchArticles`) rather than mocking, so they hit the real CrossRef API and are genuinely network-dependent; see the "Testing" note below before adding more.
 
 `next.config.mjs` sets `typescript: { ignoreBuildErrors: true }` and `images: { unoptimized: true }` — a production build will succeed even with type errors, so type-check manually with `pnpm exec tsc --noEmit` if you want that signal.
 
@@ -67,6 +67,17 @@ Non-DOI relation targets get a placeholder node (`createPlaceholderNode`) that f
 `searchParams` on page components must be typed as a `Promise` and awaited (see `app/research-network/page.tsx` and `app/compare/page.tsx`) — this was a real regression first fixed in commit `7e24621`; a second instance in `app/compare/page.tsx` was missed and fixed later. If you add a new page that reads `searchParams`, use the same `Promise<...>` + `await` pattern.
 
 Publication data normalization (`convertToPub`/`safeConvertToPub`/`sanitizePublication` converting a CrossRef `work` object into the app's `Publication` type) is duplicated near-verbatim across `lib/search-service.ts`, `app/api/publication/route.ts`, and `app/compare/actions.ts` rather than shared — be aware when fixing a CrossRef-parsing bug that it likely needs the same fix in more than one place.
+
+## Testing
+
+There's no mocking layer for CrossRef/DataDryad/Figshare, so tests under `tests/` call `lib/` functions directly and hit the real APIs — they assert on *outcomes* (e.g. "this query produces a Very High confidence match") rather than exact response shapes, since upstream data can shift over time.
+
+Two things every test in this style needs, both demonstrated in `tests/homepage-example-searches.test.ts`:
+
+- **Retry on any failure, not just 429** — CrossRef's public tier allows ~1 request/second and a single `searchArticles()` call can itself fire several requests (initial search + per-match DOI lookups via `fetchPublicationByDOI`), so treat rate limits *and* transient connect timeouts as retryable, with backoff and spacing between test cases.
+- **A `beforeAll` network warm-up with its own timeout** — the first outbound connection in a fresh test run is occasionally slow to establish; without a warm-up, that latency eats into the first real test's retry budget instead of its own.
+
+The example-search list in that test file is sourced from `EXAMPLE_SEARCHES` in `components/search-form.tsx` (the "Try an example" links on the homepage) — if that list changes, check whether the test's confidence-level expectations still hold.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
