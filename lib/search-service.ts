@@ -4,8 +4,13 @@ import type { ArticleMatch, CrossRefResponse, CrossRefWork, Publication, Publica
 import { generateText } from "ai"
 import { openai } from "@ai-sdk/openai"
 import { getTypeLabel } from "./crossref-types"
-
-type ConfidenceLevel = "High" | "Medium" | "Low"
+import {
+  MIN_TITLE_SCORE_TO_CONSIDER,
+  calculateAuthorScore,
+  calculateCombinedScore,
+  calculateTitleScore,
+  confidenceFromScore,
+} from "./confidence-scoring"
 
 const CROSSREF_API_URL = "https://api.crossref.org/works"
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY
@@ -1067,64 +1072,18 @@ function performBasicMatching(works: CrossRefWork[]): ArticleMatch[] {
           const targetTitle = target.title?.[0]?.toLowerCase() || ""
           if (!targetTitle) continue
 
-          // Calculate title similarity
-          let titleScore = 0
-
-          // Exact title match
-          if (sourceTitle === targetTitle) {
-            titleScore = 1.0
-          } else {
-            // Calculate similarity based on common words
-            const sourceWords = sourceTitle.split(/\s+/).filter((w) => w.length > 3)
-            const targetWords = targetTitle.split(/\s+/).filter((w) => w.length > 3)
-
-            // Count common words
-            const sourceWordSet = new Set(sourceWords)
-            let commonWords = 0
-
-            for (const word of targetWords) {
-              if (sourceWordSet.has(word)) {
-                commonWords++
-              }
-            }
-
-            titleScore = commonWords / Math.max(sourceWords.length, targetWords.length)
-          }
+          const titleScore = calculateTitleScore(sourceTitle, targetTitle)
 
           // Only consider matches with reasonable title similarity
-          if (titleScore < 0.5) continue
+          if (titleScore < MIN_TITLE_SCORE_TO_CONSIDER) continue
 
-          // Calculate author similarity
           const targetAuthors =
             target.author?.map((a) => `${a.family || ""}`.toLowerCase().trim()).filter(Boolean) || []
-
-          let authorScore = 0
-
-          if (sourceAuthors.length > 0 && targetAuthors.length > 0) {
-            // Check if first author matches
-            const firstAuthorMatch = sourceAuthors[0] === targetAuthors[0]
-
-            // Count common authors
-            const targetAuthorSet = new Set(targetAuthors)
-            let commonAuthors = 0
-
-            for (const author of sourceAuthors) {
-              if (targetAuthorSet.has(author)) {
-                commonAuthors++
-              }
-            }
-
-            // Weight first author match more heavily
-            authorScore =
-              (firstAuthorMatch ? 0.6 : 0) +
-              (0.4 * commonAuthors) / Math.max(sourceAuthors.length, targetAuthors.length)
-          }
-
-          // Combined score (weighted more towards title)
-          const combinedScore = titleScore * 0.7 + authorScore * 0.3
+          const authorScore = calculateAuthorScore(sourceAuthors, targetAuthors)
+          const combinedScore = calculateCombinedScore(titleScore, authorScore)
 
           // Update best match if this is better
-          if (combinedScore > bestTitleScore * 0.7 + bestAuthorScore * 0.3) {
+          if (combinedScore > calculateCombinedScore(bestTitleScore, bestAuthorScore)) {
             bestMatch = target
             bestTitleScore = titleScore
             bestAuthorScore = authorScore
@@ -1133,16 +1092,7 @@ function performBasicMatching(works: CrossRefWork[]): ArticleMatch[] {
 
         // If we found a good match, add it to results
         if (bestMatch) {
-          // Determine confidence level based on scores
-          let confidenceLevel: ConfidenceLevel = "Low"
-
-          const combinedScore = bestTitleScore * 0.7 + bestAuthorScore * 0.3
-
-          if (combinedScore > 0.9) {
-            confidenceLevel = "High"
-          } else if (combinedScore > 0.7) {
-            confidenceLevel = "Medium"
-          }
+          const confidenceLevel = confidenceFromScore(calculateCombinedScore(bestTitleScore, bestAuthorScore))
 
           console.log(
             `Basic matching found ${sourceType}->${targetType} match with title score ${bestTitleScore.toFixed(2)}, author score ${bestAuthorScore.toFixed(2)}, confidence ${confidenceLevel}`,

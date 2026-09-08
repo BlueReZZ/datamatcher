@@ -40,7 +40,7 @@ Everything under `lib/` that talks to an external API is a `"use server"` module
 
 1. **CrossRef search** — query the CrossRef `/works` endpoint.
 2. **Direct matches** (`extractDirectMatches`) — trust CrossRef's own `relation["has-preprint"]` / `relation["is-preprint-of"]` metadata when present → confidence `"Very High"`.
-3. **Basic matching** (`performBasicMatching`) — bidirectional title-word-overlap + author-surname-overlap scoring between preprints and journal-articles in the result set → confidence `"High"/"Medium"/"Low"`.
+3. **Basic matching** (`performBasicMatching`) — bidirectional title-word-overlap + author-surname-overlap scoring between preprints and journal-articles in the result set → confidence `"High"/"Medium"/"Low"`. The pure scoring math (title score, author score, combined score, score→confidence thresholds) lives in `lib/confidence-scoring.ts`, split out specifically so it's unit-testable without hitting the network — `search-service.ts` is a `"use server"` module, and those can only export async functions, so the pure helpers couldn't live there.
 4. **LLM fuzzy matching** (`performFuzzyMatchingWithTimeout`) — last resort only, and only if there's enough time budget left (`TOTAL_FUNCTION_TIMEOUT_MS = 45000`, `LLM_TIMEOUT_MS = 15000`) and both preprints and articles exist in the result set. Sends a trimmed-down payload to `gpt-4o-mini` and parses a JSON array out of the response text.
 
 Every step is wrapped so failures fall back to the next step rather than throwing — expect a lot of nested `try/catch` and `console.log`/`console.error` tracing throughout this file; that's the existing debugging convention, not incidental noise.
@@ -70,7 +70,12 @@ Publication data normalization (`convertToPub`/`safeConvertToPub`/`sanitizePubli
 
 ## Testing
 
-There's no mocking layer for CrossRef/DataDryad/Figshare, so tests under `tests/` call `lib/` functions directly and hit the real APIs — they assert on *outcomes* (e.g. "this query produces a Very High confidence match") rather than exact response shapes, since upstream data can shift over time.
+Two tiers, by design:
+
+- **Fast/unit** — colocated `*.test.ts` next to the module under test (e.g. `lib/confidence-scoring.test.ts`), pure functions only, no network, runs in milliseconds. This is where confidence-scoring math, formatting helpers, etc. should be tested going forward.
+- **Slow/integration** — `tests/*.test.ts`, calls `lib/` functions directly and hits the real CrossRef/DataDryad/Figshare APIs (no mocking layer exists), asserting on *outcomes* (e.g. "this query produces a Very High confidence match") rather than exact response shapes, since upstream data can shift over time.
+
+`pnpm test` runs both. If a fix belongs in the scoring math, prefer adding/extending a fast unit test in `lib/confidence-scoring.test.ts` over reaching for the network suite.
 
 Two things every test in this style needs, both demonstrated in `tests/homepage-example-searches.test.ts`:
 
