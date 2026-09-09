@@ -12,14 +12,26 @@ import { searchArticles } from "@/lib/search-service"
 import type { ArticleMatch } from "@/lib/types"
 
 // Example searches to display
-const EXAMPLE_SEARCHES = [
-  "Synthetic eco-evolutionary dynamics in simple molecular environment",
-  "A weakly structured stem for human origins in Africa",
-  "Oncogenic RAS Induces a Distinctive Form of Non-Canonical Autophagy Mediated by the P38-ULK1-PI4KB Axis",
-  "Zinc finger homeobox-3 (ZFHX3) orchestrates genome-wide daily gene expression in the suprachiasmatic nucleus",
-  "High resolution deep mutational scanning of the melanocortin-4 receptor enables target characterization for drug discovery",
-  "The genus Cortinarius should not (yet) be split",
-  "Social state alters vision using three circuit mechanisms in Drosophila",
+const EXAMPLE_SEARCH_GROUPS = [
+  {
+    label: "Very High Confidence matches",
+    examples: [
+      "Synthetic eco-evolutionary dynamics in simple molecular environment",
+      "A weakly structured stem for human origins in Africa",
+      "Oncogenic RAS Induces a Distinctive Form of Non-Canonical Autophagy Mediated by the P38-ULK1-PI4KB Axis",
+    ],
+  },
+  {
+    label: "Data mapping",
+    examples: [
+      "Zinc finger homeobox-3 (ZFHX3) orchestrates genome-wide daily gene expression in the suprachiasmatic nucleus",
+      "High resolution deep mutational scanning of the melanocortin-4 receptor enables target characterization for drug discovery",
+    ],
+  },
+  {
+    label: "Medium match results",
+    examples: ["The genus Cortinarius should not (yet) be split", "Social state alters vision using three circuit mechanisms in Drosophila"],
+  },
 ]
 
 export function SearchForm() {
@@ -192,21 +204,26 @@ export function SearchForm() {
         </div>
 
         {/* Example searches */}
-        <div className="space-y-2">
+        <div className="space-y-4">
           <p className="text-sm font-medium text-muted-foreground">Try an example:</p>
-          <div className="flex flex-col space-y-2">
-            {EXAMPLE_SEARCHES.map((example, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => handleExampleClick(example)}
-                className="text-sm text-primary hover:text-primary/80 hover:underline flex items-center"
-              >
-                <ArrowRightIcon className="h-3 w-3 mr-1" />
-                <span>{example}</span>
-              </button>
-            ))}
-          </div>
+          {EXAMPLE_SEARCH_GROUPS.map((group) => (
+            <div key={group.label} className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground/70">{group.label}</p>
+              <div className="flex flex-col space-y-2">
+                {group.examples.map((example) => (
+                  <button
+                    key={example}
+                    type="button"
+                    onClick={() => handleExampleClick(example)}
+                    className="text-sm text-primary hover:text-primary/80 hover:underline flex items-center"
+                  >
+                    <ArrowRightIcon className="h-3 w-3 mr-1" />
+                    <span>{example}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </form>
 

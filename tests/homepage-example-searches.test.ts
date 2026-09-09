@@ -3,13 +3,19 @@ import { searchArticles } from "@/lib/search-service"
 import type { ArticleMatch, ConfidenceLevel } from "@/lib/types"
 
 // These are the exact "Try an example" links on the homepage
-// (components/search-form.tsx, EXAMPLE_SEARCHES) - each one is a curated
+// (components/search-form.tsx, EXAMPLE_SEARCH_GROUPS) - each one is a curated
 // demo of a specific matching outcome, not an arbitrary search term.
 
 const VERY_HIGH_CONFIDENCE_EXAMPLES = [
   "Synthetic eco-evolutionary dynamics in simple molecular environment",
   "A weakly structured stem for human origins in Africa",
   "Oncogenic RAS Induces a Distinctive Form of Non-Canonical Autophagy Mediated by the P38-ULK1-PI4KB Axis",
+]
+
+// Labeled "Data mapping" on the homepage - these still produce Very High
+// confidence journal-article matches via searchArticles, so the assertion
+// here is unchanged; only the homepage grouping/label differs.
+const DATA_MAPPING_EXAMPLES = [
   "Zinc finger homeobox-3 (ZFHX3) orchestrates genome-wide daily gene expression in the suprachiasmatic nucleus",
   "High resolution deep mutational scanning of the melanocortin-4 receptor enables target characterization for drug discovery",
 ]
@@ -62,6 +68,17 @@ beforeAll(async () => {
 
 describe("homepage example searches", () => {
   describe.each(VERY_HIGH_CONFIDENCE_EXAMPLES)("%s", (query) => {
+    it(
+      "produces a Very High confidence match",
+      async () => {
+        const results = await searchWithRetry(query)
+        expectSomeMatchAtConfidence(results, "Very High")
+      },
+      60000,
+    )
+  })
+
+  describe.each(DATA_MAPPING_EXAMPLES)("%s", (query) => {
     it(
       "produces a Very High confidence match",
       async () => {
