@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { BookOpenIcon } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import packageJson from "@/package.json"
 
 export function Navbar() {
   return (
@@ -10,6 +11,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center space-x-2">
             <BookOpenIcon className="h-6 w-6" />
             <span className="font-bold">Open Science Data Matcher</span>
+            <span className="text-xs text-muted-foreground">v{packageJson.version}</span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end">
