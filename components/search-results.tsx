@@ -12,6 +12,10 @@ import {
   ArrowRightLeftIcon as ArrowsRightLeftIcon,
   NetworkIcon,
   RefreshCwIcon,
+  CheckCircle2Icon,
+  ShieldCheckIcon,
+  AlertCircleIcon,
+  AlertTriangleIcon,
 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -29,18 +33,18 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
     return results.some((match) => match.confidenceLevel === "Very High")
   }
 
-  const getConfidenceBadge = (confidence: ConfidenceLevel) => {
+  const getConfidenceStripInfo = (confidence: ConfidenceLevel) => {
     switch (confidence) {
       case "Very High":
-        return <Badge className="bg-success text-success-foreground hover:brightness-90">Very High Confidence</Badge>
+        return { label: "Very High Confidence", classes: "bg-success text-success-foreground", icon: CheckCircle2Icon }
       case "High":
-        return <Badge className="bg-info text-info-foreground hover:brightness-90">High Confidence</Badge>
+        return { label: "High Confidence", classes: "bg-info text-info-foreground", icon: ShieldCheckIcon }
       case "Medium":
-        return <Badge className="bg-warning text-warning-foreground hover:brightness-90">Medium Confidence</Badge>
+        return { label: "Medium Confidence", classes: "bg-warning text-warning-foreground", icon: AlertCircleIcon }
       case "Low":
-        return <Badge className="bg-destructive text-destructive-foreground hover:brightness-90">Low Confidence</Badge>
+        return { label: "Low Confidence", classes: "bg-destructive text-destructive-foreground", icon: AlertTriangleIcon }
       default:
-        return <Badge className="bg-muted text-muted-foreground hover:brightness-95">Unknown Confidence</Badge>
+        return { label: "Unknown Confidence", classes: "bg-muted text-muted-foreground", icon: HelpCircleIcon }
     }
   }
 
@@ -202,14 +206,23 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
 
           const disableEnhanced = shouldDisableEnhancedMatching(results)
 
-          return (
-            <Card key={index} className="overflow-hidden bg-white text-foreground hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start gap-4 mb-2">
-                  <h3 className="text-lg font-semibold">Match #{index + 1}</h3>
-                  <div>{getConfidenceBadge(match.confidenceLevel)}</div>
-                </div>
+          const strip = getConfidenceStripInfo(match.confidenceLevel)
+          const StripIcon = strip.icon
 
+          return (
+            <Card
+              key={index}
+              className="overflow-hidden bg-white text-foreground hover:shadow-md transition-shadow py-0 gap-0"
+            >
+              <div className={`flex items-center justify-between gap-4 px-6 py-3 ${strip.classes}`}>
+                <span className="font-semibold">Match #{index + 1}</span>
+                <span className="flex items-center gap-1.5 text-sm font-semibold">
+                  <StripIcon className="h-4 w-4" />
+                  {strip.label}
+                </span>
+              </div>
+
+              <CardContent className="p-6">
                 <PublicationDetails publication={match.source} />
 
                 {match.source.doi && (
