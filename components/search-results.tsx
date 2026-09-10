@@ -203,7 +203,7 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
           const disableEnhanced = shouldDisableEnhancedMatching(results)
 
           return (
-            <Card key={index} className="overflow-hidden hover:shadow-md transition-shadow">
+            <Card key={index} className="overflow-hidden bg-white text-foreground hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start gap-4 mb-2">
                   <h3 className="text-lg font-semibold">Match #{index + 1}</h3>
