@@ -20,11 +20,11 @@ const DATA_MAPPING_EXAMPLES = [
   "High resolution deep mutational scanning of the melanocortin-4 receptor enables target characterization for drug discovery",
 ]
 
-// The homepage's "Preprint elsewhere" group ("Ancient genomes from Ladakh...")
-// is deliberately not covered here: it currently demonstrates a mismatch
-// (searchArticles reports "Very High" confidence against unrelated papers,
-// via extractDirectMatches picking up relation metadata that doesn't belong
-// to this work) that is tracked as a bug to fix, not a behavior to assert on.
+// The homepage's "Preprint elsewhere" group is deliberately not covered here:
+// each example currently demonstrates a mismatch (searchArticles reports
+// "Very High" confidence against unrelated papers, via extractDirectMatches
+// picking up relation metadata that doesn't belong to the searched work) that
+// is tracked as a bug to fix, not a behavior to assert on.
 
 const MEDIUM_CONFIDENCE_EXAMPLES = [
   "The genus Cortinarius should not (yet) be split",

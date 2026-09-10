@@ -39,7 +39,10 @@ const EXAMPLE_SEARCH_GROUPS = [
   },
   {
     label: "Preprint elsewhere",
-    examples: ["Ancient genomes from Ladakh reveal 2800-year-old mixture between Tibetans and South Asians"],
+    examples: [
+      "Ancient genomes from Ladakh reveal 2800-year-old mixture between Tibetans and South Asians",
+      "Time to HIV rebound after antiretroviral therapy interruption: a double-blind randomised placebo-controlled trial of long-acting broadly neutralising antibodies; The RIO Trial",
+    ],
   },
 ]
 
