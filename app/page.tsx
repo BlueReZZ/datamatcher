@@ -1,4 +1,4 @@
-import { SearchTabs } from "@/components/search-tabs"
+import { SearchForm } from "@/components/search-form"
 import { HeroSection } from "@/components/hero-section"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { InfoIcon } from "lucide-react"
@@ -26,7 +26,7 @@ export default function Home() {
       )}
 
       <div className="w-full max-w-4xl mx-auto mt-8">
-        <SearchTabs />
+        <SearchForm />
       </div>
     </main>
   )
