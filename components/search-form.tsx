@@ -37,6 +37,10 @@ const EXAMPLE_SEARCH_GROUPS = [
       "Nuclear envelope budding is a non-canonical mechanism to export large transcripts in muscle cells",
     ],
   },
+  {
+    label: "Preprint elsewhere",
+    examples: ["Ancient genomes from Ladakh reveal 2800-year-old mixture between Tibetans and South Asians"],
+  },
 ]
 
 export function SearchForm() {
