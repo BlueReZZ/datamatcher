@@ -24,6 +24,7 @@ const MEDIUM_CONFIDENCE_EXAMPLES = [
   "The genus Cortinarius should not (yet) be split",
   "Social state alters vision using three circuit mechanisms in Drosophila",
   "The E3 ubiquitin ligase mechanism specifying target-directed microRNA degradation",
+  "Nuclear envelope budding is a non-canonical mechanism to export large transcripts in muscle cells",
 ]
 
 // CrossRef's public API allows ~1 request/second, and a single searchArticles()
