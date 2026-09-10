@@ -36,7 +36,7 @@ Everything under `lib/` that talks to an external API is a `"use server"` module
 
 ### Matching pipeline (`lib/search-service.ts`)
 
-`searchArticles(query)` / `searchArticlesAdvanced(params)` run a cascading strategy, each step only running if the previous one didn't produce good results, in order to stay under Vercel's function timeout:
+`searchArticles(query)` runs a cascading strategy, each step only running if the previous one didn't produce good results, in order to stay under Vercel's function timeout:
 
 1. **CrossRef search** — query the CrossRef `/works` endpoint.
 2. **Direct matches** (`extractDirectMatches`) — trust CrossRef's own `relation["has-preprint"]` / `relation["is-preprint-of"]` metadata when present → confidence `"Very High"`.

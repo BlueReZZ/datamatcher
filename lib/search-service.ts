@@ -20,14 +20,6 @@ const CROSSREF_PLUS_TOKEN = process.env.CROSSREF_PLUS_TOKEN
 const LLM_TIMEOUT_MS = 15000 // 15 seconds for LLM calls
 const TOTAL_FUNCTION_TIMEOUT_MS = 45000 // 45 seconds total (well under Vercel's 60s limit)
 
-// Interface for advanced search parameters
-export interface AdvancedSearchParams {
-  title?: string
-  author?: string
-  containerTitle?: string // Keeping this for backward compatibility
-  funderName?: string
-}
-
 // Options for searchArticles
 export interface SearchOptions {
   // Skip the direct-match short-circuit (CrossRef relation metadata) so basic
@@ -413,97 +405,6 @@ export async function searchArticles(query: string, options?: SearchOptions): Pr
   }
 }
 
-// New function for advanced search
-export async function searchArticlesAdvanced(params: AdvancedSearchParams): Promise<ArticleMatch[]> {
-  try {
-    // Step 1: Search CrossRef API with advanced parameters
-    const crossRefResults = await searchCrossRefAdvanced(params)
-
-    // If no results from CrossRef, return empty array
-    if (!crossRefResults || crossRefResults.length === 0) {
-      console.log("No results found from CrossRef API")
-      return []
-    }
-
-    // Step 2: Extract direct matches from CrossRef metadata
-    try {
-      const directMatches = await extractDirectMatches(crossRefResults)
-
-      // If we have direct matches, return them immediately
-      if (directMatches.length > 0) {
-        console.log(`Found ${directMatches.length} direct matches from advanced search, returning them`)
-        return directMatches
-      }
-    } catch (error) {
-      console.error("Error extracting direct matches:", error)
-      // Continue to basic matching if direct matching fails
-    }
-
-    // Step 3: Try basic title and author matching
-    try {
-      const basicMatches = performBasicMatching(crossRefResults)
-
-      // Check if we have good quality basic matches
-      const highQualityMatches = basicMatches.filter(
-        (match) => match.confidenceLevel === "High" || match.confidenceLevel === "Medium",
-      )
-
-      const matchesWithPairs = basicMatches.filter((match) => match.match !== undefined)
-
-      // Return basic matches if we have good results
-      if (highQualityMatches.length > 0 || (matchesWithPairs.length >= 2 && highQualityMatches.length > 0)) {
-        console.log(
-          `Advanced search found good basic matches: ${highQualityMatches.length} high-quality, ${matchesWithPairs.length} with pairs. Returning without LLM.`,
-        )
-        return basicMatches
-      }
-
-      console.log(
-        `Advanced search basic matching found ${basicMatches.length} matches but quality is insufficient for skipping LLM. Will attempt LLM.`,
-      )
-    } catch (error) {
-      console.error("Error in basic matching:", error)
-      // Continue to LLM matching if basic matching fails
-    }
-
-    // Step 4: Only attempt LLM matching if basic matching didn't find good results
-    try {
-      // Create a query string from the advanced parameters for the LLM
-      const queryString = Object.entries(params)
-        .filter(([_, value]) => value)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(", ")
-
-      console.log("Advanced search: Basic matching didn't find good results. Attempting LLM fuzzy matching...")
-      const fuzzyMatches = await performFuzzyMatchingWithTimeout(queryString, crossRefResults, LLM_TIMEOUT_MS)
-      return fuzzyMatches
-    } catch (error) {
-      console.error("Error in fuzzy matching:", error)
-
-      // Fallback to basic results if fuzzy matching fails
-      console.log("Advanced search: LLM matching failed, falling back to basic results")
-      try {
-        return performBasicMatching(crossRefResults)
-      } catch (basicError) {
-        console.error("Error in fallback basic matching:", basicError)
-        return crossRefResults.slice(0, 5).map((work) => ({
-          source: safeConvertToPub(work),
-          confidenceLevel: "Low",
-        }))
-      }
-    }
-  } catch (error) {
-    console.error("Error in searchArticlesAdvanced:", error)
-
-    // Provide more specific error message
-    if (error instanceof Error) {
-      throw new Error(`Failed to search for articles: ${error.message}`)
-    } else {
-      throw new Error("Failed to search for articles")
-    }
-  }
-}
-
 async function searchCrossRef(query: string): Promise<CrossRefWork[]> {
   try {
     // Use a different approach: don't limit fields with select parameter
@@ -594,62 +495,6 @@ async function searchCrossRefBroader(originalQuery: string): Promise<CrossRefWor
     return data.message.items
   } catch (error) {
     console.error("Error in broader CrossRef search:", error)
-    throw error
-  }
-}
-
-// New function for advanced CrossRef search
-async function searchCrossRefAdvanced(params: AdvancedSearchParams): Promise<CrossRefWork[]> {
-  try {
-    const searchParams = new URLSearchParams()
-
-    // Add each parameter if it exists
-    if (params.title) {
-      searchParams.append("query.title", params.title)
-    }
-
-    if (params.author) {
-      searchParams.append("query.author", params.author)
-    }
-
-    // Only add container-title if it exists (for backward compatibility)
-    if (params.containerTitle) {
-      searchParams.append("query.container-title", params.containerTitle)
-    }
-
-    if (params.funderName) {
-      searchParams.append("query.funder-name", params.funderName)
-    }
-
-    // Set number of results
-    searchParams.append("rows", "20")
-
-    console.log(`Searching CrossRef API with advanced parameters: ${searchParams.toString()}`)
-    const headers = getCrossRefHeaders()
-    logRequestHeaders(headers, "searchCrossRefAdvanced")
-
-    const response = await fetch(`${CROSSREF_API_URL}?${searchParams.toString()}`, {
-      headers,
-    })
-
-    await logResponseDetails(response, "searchCrossRefAdvanced")
-
-    if (!response.ok) {
-      throw new Error(`CrossRef API error: ${response.status}`)
-    }
-
-    const data: CrossRefResponse = await response.json()
-
-    if (!data.message || !Array.isArray(data.message.items)) {
-      console.error("Unexpected CrossRef API response format:", data)
-      throw new Error("Invalid response format from CrossRef API")
-    }
-
-    console.log(`Found ${data.message.items.length} results from CrossRef API`)
-
-    return data.message.items
-  } catch (error) {
-    console.error("Error searching CrossRef with advanced parameters:", error)
     throw error
   }
 }
