@@ -22,6 +22,10 @@ const EXAMPLE_SEARCH_GROUPS = [
     ],
   },
   {
+    label: "High confidence matches",
+    examples: ["HAMMER: Hairpin-based APOBEC3A-mediated mRNA editing reporter"],
+  },
+  {
     label: "Data mapping",
     examples: [
       "Zinc finger homeobox-3 (ZFHX3) orchestrates genome-wide daily gene expression in the suprachiasmatic nucleus",

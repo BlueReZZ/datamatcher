@@ -12,6 +12,8 @@ const VERY_HIGH_CONFIDENCE_EXAMPLES = [
   "Oncogenic RAS Induces a Distinctive Form of Non-Canonical Autophagy Mediated by the P38-ULK1-PI4KB Axis",
 ]
 
+const HIGH_CONFIDENCE_EXAMPLES = ["HAMMER: Hairpin-based APOBEC3A-mediated mRNA editing reporter"]
+
 // Labeled "Data mapping" on the homepage - these still produce Very High
 // confidence journal-article matches via searchArticles, so the assertion
 // here is unchanged; only the homepage grouping/label differs.
@@ -81,6 +83,17 @@ describe("homepage example searches", () => {
       async () => {
         const results = await searchWithRetry(query)
         expectSomeMatchAtConfidence(results, "Very High")
+      },
+      60000,
+    )
+  })
+
+  describe.each(HIGH_CONFIDENCE_EXAMPLES)("%s", (query) => {
+    it(
+      "produces a High confidence match",
+      async () => {
+        const results = await searchWithRetry(query)
+        expectSomeMatchAtConfidence(results, "High")
       },
       60000,
     )
