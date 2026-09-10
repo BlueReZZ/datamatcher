@@ -32,52 +32,43 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
   const getConfidenceBadge = (confidence: ConfidenceLevel) => {
     switch (confidence) {
       case "Very High":
-        return <Badge className="bg-green-500 hover:bg-green-600">Very High Confidence</Badge>
+        return <Badge className="bg-success text-success-foreground hover:brightness-90">Very High Confidence</Badge>
       case "High":
-        return <Badge className="bg-blue-500 hover:bg-blue-600">High Confidence</Badge>
+        return <Badge className="bg-info text-info-foreground hover:brightness-90">High Confidence</Badge>
       case "Medium":
-        return <Badge className="bg-yellow-500 hover:bg-yellow-600">Medium Confidence</Badge>
+        return <Badge className="bg-warning text-warning-foreground hover:brightness-90">Medium Confidence</Badge>
       case "Low":
-        return <Badge className="bg-red-500 hover:bg-red-600">Low Confidence</Badge>
+        return <Badge className="bg-destructive text-destructive-foreground hover:brightness-90">Low Confidence</Badge>
       default:
-        return <Badge className="bg-gray-500 hover:bg-gray-600">Unknown Confidence</Badge>
+        return <Badge className="bg-muted text-muted-foreground hover:brightness-95">Unknown Confidence</Badge>
     }
   }
 
   const getPublicationIcon = (type: string) => {
     if (type === "preprint") {
-      return <FileTextIcon className="h-5 w-5 text-orange-500" />
+      return <FileTextIcon className="h-5 w-5 text-teal-600" />
     } else if (type === "article") {
-      return <NewspaperIcon className="h-5 w-5 text-blue-500" />
+      return <NewspaperIcon className="h-5 w-5 text-pink-600" />
     }
-    return <HelpCircleIcon className="h-5 w-5 text-gray-500" />
+    return <HelpCircleIcon className="h-5 w-5 text-muted-foreground" />
   }
 
   const getPublicationBadge = (publication: Publication) => {
     if (publication.typeLabel) {
       return (
-        <Badge
-          variant="outline"
-          className="bg-purple-100 text-purple-800 hover:bg-purple-200 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800"
-        >
+        <Badge variant="outline" className="bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-200">
           {publication.typeLabel}
         </Badge>
       )
     } else if (publication.type === "preprint") {
       return (
-        <Badge
-          variant="outline"
-          className="bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800"
-        >
+        <Badge variant="outline" className="bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200">
           Preprint
         </Badge>
       )
     } else if (publication.type === "article") {
       return (
-        <Badge
-          variant="outline"
-          className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800"
-        >
+        <Badge variant="outline" className="bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200">
           Published Article
         </Badge>
       )
@@ -188,7 +179,7 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
       </div>
 
       {allLowConfidence && (
-        <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 rounded-md mb-4 text-sm">
+        <div className="p-3 bg-warning/10 text-warning rounded-md mb-4 text-sm">
           Note: Advanced LLM-based matching is unavailable. Results shown are basic matches from CrossRef.
         </div>
       )}
@@ -228,7 +219,7 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
                     >
                       <Button
                         variant="outline"
-                        className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-400 dark:border-indigo-800"
+                        className="bg-info/10 text-info hover:bg-info/20 border-info/30"
                       >
                         <NetworkIcon className="mr-2 h-4 w-4" />
                         View Research Network
@@ -256,7 +247,7 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
                         >
                           <Button
                             variant="outline"
-                            className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-400 dark:border-indigo-800"
+                            className="bg-info/10 text-info hover:bg-info/20 border-info/30"
                           >
                             <NetworkIcon className="mr-2 h-4 w-4" />
                             View Research Network
@@ -270,7 +261,7 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
                 {showConfirmButton && comparisonUrl && (
                   <div className="mt-4 flex justify-end gap-2">
                     <Link href={comparisonUrl}>
-                      <Button className="bg-blue-600 hover:bg-blue-700">
+                      <Button>
                         <ArrowsRightLeftIcon className="mr-2 h-4 w-4" />
                         Compare Match
                       </Button>

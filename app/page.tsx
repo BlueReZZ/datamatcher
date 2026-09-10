@@ -13,11 +13,8 @@ export default function Home() {
 
       {!isApiKeyConfigured && (
         <div className="w-full max-w-4xl mx-auto mt-8">
-          <Alert
-            variant="warning"
-            className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800"
-          >
-            <InfoIcon className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+          <Alert variant="warning" className="bg-warning/10">
+            <InfoIcon className="h-4 w-4 text-warning" />
             <AlertTitle>OpenAI API Key Not Configured</AlertTitle>
             <AlertDescription>
               The application is running without an OpenAI API key. LLM-based fuzzy matching will be unavailable, and

@@ -150,7 +150,7 @@ export function NetworkMethodToggle({
                 </div>
                 <div className="flex items-center gap-2">
                   {useMatching ? (
-                    <Badge className="bg-green-500 flex items-center gap-1">
+                    <Badge className="bg-success text-success-foreground flex items-center gap-1">
                       <SearchIcon className="h-3 w-3" />
                       Enhanced
                     </Badge>
@@ -183,7 +183,7 @@ export function NetworkMethodToggle({
                 </div>
                 <div className="flex items-center gap-2">
                   {includeRepositoryData ? (
-                    <Badge className="bg-purple-500 flex items-center gap-1">
+                    <Badge className="bg-secondary text-secondary-foreground flex items-center gap-1">
                       <DatabaseIcon className="h-3 w-3" />
                       Datasets Included
                     </Badge>
@@ -216,7 +216,7 @@ export function NetworkMethodToggle({
                 </div>
                 <div className="flex items-center gap-2">
                   {includeSecondLevel ? (
-                    <Badge className="bg-blue-500 flex items-center gap-1">
+                    <Badge className="bg-info text-info-foreground flex items-center gap-1">
                       <NetworkIcon className="h-3 w-3" />
                       Extended Network
                     </Badge>

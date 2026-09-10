@@ -98,16 +98,16 @@ export default async function ComparePage({
 
         <h1 className="text-2xl font-bold mb-6">Publication Comparison</h1>
 
-        <Card className="mb-6 bg-slate-50 dark:bg-slate-900">
+        <Card className="mb-6 bg-muted">
           <CardContent className="p-6">
             <div className="flex items-center gap-2 mb-2">
-              <ArrowsRightLeftIcon className="h-5 w-5 text-blue-500" />
+              <ArrowsRightLeftIcon className="h-5 w-5 text-info" />
               <h2 className="text-lg font-semibold">Match Details</h2>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <PercentIcon className="h-4 w-4 text-blue-500" />
+                <PercentIcon className="h-4 w-4 text-info" />
                 <p>
                   <span className="font-medium">Confidence Level:</span> {confidenceLevel}
                 </p>
@@ -134,22 +134,22 @@ export default async function ComparePage({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {sourcePublication.type === "preprint" ? (
-                      <FileTextIcon className="h-5 w-5 text-orange-500" />
+                      <FileTextIcon className="h-5 w-5 text-teal-600" />
                     ) : (
-                      <NewspaperIcon className="h-5 w-5 text-blue-500" />
+                      <NewspaperIcon className="h-5 w-5 text-pink-600" />
                     )}
                     <CardTitle className="text-xl">
                       {sourcePublication.type === "preprint" ? (
                         <Badge
                           variant="outline"
-                          className="bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800"
+                          className="bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200"
                         >
                           Preprint
                         </Badge>
                       ) : sourcePublication.type === "article" ? (
                         <Badge
                           variant="outline"
-                          className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800"
+                          className="bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200"
                         >
                           Published Article
                         </Badge>
@@ -220,7 +220,7 @@ export default async function ComparePage({
 
                 <div>
                   <h3 className="text-lg font-medium mb-2">Abstract</h3>
-                  <div className="text-sm bg-muted/50 p-4 rounded-md prose prose-sm max-w-none dark:prose-invert">
+                  <div className="text-sm bg-muted/50 p-4 rounded-md prose prose-sm max-w-none">
                     <div dangerouslySetInnerHTML={{ __html: sourceAbstractHtml }} />
                   </div>
                 </div>
@@ -235,22 +235,22 @@ export default async function ComparePage({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {matchPublication.type === "preprint" ? (
-                      <FileTextIcon className="h-5 w-5 text-orange-500" />
+                      <FileTextIcon className="h-5 w-5 text-teal-600" />
                     ) : (
-                      <NewspaperIcon className="h-5 w-5 text-blue-500" />
+                      <NewspaperIcon className="h-5 w-5 text-pink-600" />
                     )}
                     <CardTitle className="text-xl">
                       {matchPublication.type === "preprint" ? (
                         <Badge
                           variant="outline"
-                          className="bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800"
+                          className="bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200"
                         >
                           Preprint
                         </Badge>
                       ) : matchPublication.type === "article" ? (
                         <Badge
                           variant="outline"
-                          className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800"
+                          className="bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200"
                         >
                           Published Article
                         </Badge>
@@ -321,7 +321,7 @@ export default async function ComparePage({
 
                 <div>
                   <h3 className="text-lg font-medium mb-2">Abstract</h3>
-                  <div className="text-sm bg-muted/50 p-4 rounded-md prose prose-sm max-w-none dark:prose-invert">
+                  <div className="text-sm bg-muted/50 p-4 rounded-md prose prose-sm max-w-none">
                     <div dangerouslySetInnerHTML={{ __html: matchAbstractHtml }} />
                   </div>
                 </div>

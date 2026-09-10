@@ -42,14 +42,14 @@ export function ConfirmMatchForm({ sourceDoi, matchDoi }: ConfirmMatchFormProps)
         <form action={confirmMatch} className="flex flex-col items-center">
           <input type="hidden" name="sourceDoi" value={sourceDoi} />
           <input type="hidden" name="matchDoi" value={matchDoi} />
-          <Button type="submit" className="bg-green-600 hover:bg-green-700">
+          <Button type="submit">
             <CheckCircleIcon className="mr-2 h-4 w-4" />
             Confirm This Match (Server Action)
           </Button>
         </form>
       ) : (
         <div className="flex flex-col items-center">
-          <Button onClick={handleClientSubmit} className="bg-green-600 hover:bg-green-700" disabled={isSubmitting}>
+          <Button onClick={handleClientSubmit} disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <LoaderIcon className="mr-2 h-4 w-4 animate-spin" />

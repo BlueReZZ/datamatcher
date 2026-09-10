@@ -121,9 +121,9 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
     linkGroup
       .append("line")
       .attr("stroke", (d) => {
-        if (d.type === "confirmed-match") return "#4f46e5" // indigo for confirmed matches
-        if (d.type === "algorithmic-match") return "#059669" // emerald-600 for algorithmic matches
-        if (d.type === "related-dataset") return "#c026d3" // fuchsia-600 for dataset links
+        if (d.type === "confirmed-match") return "#d50072" // brand pink for confirmed matches
+        if (d.type === "algorithmic-match") return "#0d9488" // teal-600 for algorithmic matches
+        if (d.type === "related-dataset") return "#7c3aed" // violet-600 for dataset links
         return "#999" // gray for other links
       })
       .attr("stroke-opacity", 0.6)
@@ -145,7 +145,7 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
       .attr("dy", -5)
       .attr("text-anchor", "middle")
       .attr("font-size", "10px")
-      .attr("fill", "#666")
+      .attr("fill", "#6b5b73")
       .attr("pointer-events", "none") // Don't interfere with mouse events
       .text((d) => d.label)
       .append("textPath")
@@ -181,8 +181,8 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
       .attr("height", 80)
       .attr("rx", 8)
       .attr("ry", 8)
-      .attr("fill", (d) => (d.isAnchor ? "#4f46e5" : getColorForType(d.type, d.idType, d.statusCode)))
-      .attr("stroke", (d) => (d.isAnchor ? "#312e81" : getStrokeColor(d.statusCode)))
+      .attr("fill", (d) => (d.isAnchor ? "#d50072" : getColorForType(d.type, d.idType, d.statusCode)))
+      .attr("stroke", (d) => (d.isAnchor ? "#440535" : getStrokeColor(d.statusCode)))
       .attr("stroke-width", 2)
       .attr("x", -80)
       .attr("y", -40)
@@ -192,7 +192,7 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
       .append("text")
       .attr("text-anchor", "middle")
       .attr("dy", "-15")
-      .attr("fill", (d) => (d.isAnchor ? "white" : "black"))
+      .attr("fill", (d) => (d.isAnchor ? "white" : "#1b0a3c"))
       .attr("font-weight", "bold")
       .attr("font-size", "12px")
       .text((d) => truncateText(formatTitlePlainText(d.title), 20))
@@ -204,7 +204,7 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
       .append("text")
       .attr("text-anchor", "middle")
       .attr("dy", "5")
-      .attr("fill", (d) => (d.isAnchor ? "white" : "#4b5563"))
+      .attr("fill", (d) => (d.isAnchor ? "white" : "#6b5b73"))
       .attr("font-size", "10px")
       .text((d) => {
         // For dataset nodes, include the repository name
@@ -219,7 +219,7 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
       .append("text")
       .attr("text-anchor", "middle")
       .attr("dy", "20")
-      .attr("fill", (d) => (d.isAnchor ? "white" : "#4b5563"))
+      .attr("fill", (d) => (d.isAnchor ? "white" : "#6b5b73"))
       .attr("font-size", "10px")
       .text((d) => {
         if (d.idType !== "doi") {
@@ -281,7 +281,7 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
   function getColorForType(type: string, idType: string, statusCode?: number, repository?: string): string {
     // Special colors for dataset nodes
     if (type === "dataset") {
-      return "#c084fc" // purple-400 for datasets
+      return "#2dd4bf" // teal-400 for datasets
     }
 
     // Special colors for non-DOI resources
@@ -293,9 +293,9 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
         } else if (statusCode >= 300 && statusCode < 400) {
           return "#fcd34d" // amber-300 for redirects
         } else if (statusCode >= 400 && statusCode < 500) {
-          return "#fca5a5" // red-300 for client errors
+          return "#fda4af" // rose-300 for client errors
         } else if (statusCode >= 500) {
-          return "#f87171" // red-400 for server errors
+          return "#fb7185" // rose-400 for server errors
         } else if (statusCode === 0) {
           return "#d1d5db" // gray-300 for timeouts
         }
@@ -303,36 +303,36 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
       }
 
       const idTypeColors: Record<string, string> = {
-        uri: "#fcd34d", // amber-300
-        isbn: "#a78bfa", // violet-400
-        issn: "#60a5fa", // blue-400
-        pmid: "#34d399", // emerald-400
-        pmcid: "#f87171", // red-400
+        uri: "#fde68a", // amber-200
+        isbn: "#ddd6fe", // violet-200
+        issn: "#7dd3fc", // sky-300
+        pmid: "#6ee7b7", // emerald-300
+        pmcid: "#fda4af", // rose-300
       }
       return idTypeColors[idType] || "#d1d5db" // gray-300 as default for unknown ID types
     }
 
     // Regular publication type colors
     const typeColors: Record<string, string> = {
-      "journal-article": "#bfdbfe", // blue-200
-      "posted-content": "#fed7aa", // orange-200
-      "book-chapter": "#bbf7d0", // green-200
+      "journal-article": "#fbcfe8", // pink-200
+      "posted-content": "#99f6e4", // teal-200
+      "book-chapter": "#fde68a", // amber-200
       "proceedings-article": "#ddd6fe", // violet-200
-      book: "#fecaca", // red-200
-      dataset: "#e9d5ff", // purple-200
-      report: "#fef3c7", // amber-200
-      "peer-review": "#d1fae5", // emerald-200
-      "journal-issue": "#fde68a", // amber-200
+      book: "#fecdd3", // rose-200
+      dataset: "#e2e8f0", // slate-200
+      report: "#fef08a", // yellow-200
+      "peer-review": "#a7f3d0", // emerald-200
+      "journal-issue": "#e9d5ff", // purple-200
       "reference-entry": "#c7d2fe", // indigo-200
-      component: "#a7f3d0", // emerald-200
+      component: "#ccfbf1", // teal-100
       monograph: "#ddd6fe", // violet-200
       dissertation: "#bae6fd", // sky-200
       standard: "#fecdd3", // rose-200
-      grant: "#d8b4fe", // purple-200
-      "external-resource": "#d1d5db", // gray-300
+      grant: "#e9d5ff", // purple-200
+      "external-resource": "#e2e8f0", // slate-200
     }
 
-    return typeColors[type] || "#e2e8f0" // gray-200 as default
+    return typeColors[type] || "#f1f5f9" // slate-100 as default
   }
 
   // Function to get stroke color based on status code
@@ -340,13 +340,13 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
     if (statusCode === undefined) return "#e2e8f0" // Default border
 
     if (statusCode >= 200 && statusCode < 300) {
-      return "#22c55e" // green-500 for successful responses
+      return "#15803d" // success (green) for successful responses
     } else if (statusCode >= 300 && statusCode < 400) {
-      return "#eab308" // yellow-500 for redirects
+      return "#b45309" // warning (amber) for redirects
     } else if (statusCode >= 400) {
-      return "#ef4444" // red-500 for errors
+      return "#c81e3a" // destructive (rose) for errors
     } else if (statusCode === 0) {
-      return "#6b7280" // gray-500 for timeouts
+      return "#64748b" // slate-500 for timeouts
     }
 
     return "#e2e8f0" // Default border
@@ -426,31 +426,31 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
 
     if (statusCode >= 200 && statusCode < 300) {
       return (
-        <Badge className="bg-green-500 flex items-center gap-1">
+        <Badge className="bg-success text-success-foreground flex items-center gap-1">
           <CheckCircleIcon className="h-3 w-3" />
           {statusCode}
         </Badge>
       )
     } else if (statusCode >= 300 && statusCode < 400) {
-      return <Badge className="bg-yellow-500">{statusCode} Redirect</Badge>
+      return <Badge className="bg-warning text-warning-foreground">{statusCode} Redirect</Badge>
     } else if (statusCode >= 400 && statusCode < 500) {
       return (
-        <Badge className="bg-red-500 flex items-center gap-1">
+        <Badge className="bg-destructive text-destructive-foreground flex items-center gap-1">
           <AlertTriangleIcon className="h-3 w-3" />
           {statusCode} Client Error
         </Badge>
       )
     } else if (statusCode >= 500) {
       return (
-        <Badge className="bg-red-600 flex items-center gap-1">
+        <Badge className="bg-destructive text-destructive-foreground flex items-center gap-1">
           <AlertTriangleIcon className="h-3 w-3" />
           {statusCode} Server Error
         </Badge>
       )
     } else if (statusCode === 0) {
-      return <Badge className="bg-gray-500">Timeout</Badge>
+      return <Badge className="bg-muted text-muted-foreground">Timeout</Badge>
     } else if (statusCode === -1) {
-      return <Badge className="bg-red-500">Error</Badge>
+      return <Badge className="bg-destructive text-destructive-foreground">Error</Badge>
     }
 
     return <Badge>{statusCode}</Badge>
@@ -557,7 +557,7 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
               </div>
             </CardHeader>
             <CardContent>
-              <div className="border rounded-md bg-slate-50 dark:bg-slate-900 h-[600px] overflow-hidden">
+              <div className="border rounded-md bg-muted h-[600px] overflow-hidden">
                 <svg ref={svgRef} width="100%" height="100%" />
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
@@ -580,7 +580,7 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
                 <div className="space-y-4">
                   <div>
                     <h3 className="font-semibold text-lg">Relationship Type</h3>
-                    <Badge className="mt-2 bg-blue-500">{selectedLink.label}</Badge>
+                    <Badge className="mt-2 bg-info text-info-foreground">{selectedLink.label}</Badge>
                   </div>
 
                   <div className="space-y-2">
@@ -625,11 +625,11 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
                     <div className="flex items-center gap-2 mt-2 flex-wrap">
                       <Badge
                         variant="outline"
-                        className={selectedNode.isAnchor ? "bg-indigo-100 text-indigo-800 border-indigo-200" : ""}
+                        className={selectedNode.isAnchor ? "bg-primary/10 text-primary border-primary/30" : ""}
                       >
                         {selectedNode.typeLabel || selectedNode.type}
                       </Badge>
-                      {selectedNode.isAnchor && <Badge className="bg-indigo-500">Anchor</Badge>}
+                      {selectedNode.isAnchor && <Badge>Anchor</Badge>}
                       {selectedNode.idType !== "doi" && (
                         <Badge className="bg-amber-500">{selectedNode.idType.toUpperCase()}</Badge>
                       )}
@@ -674,14 +674,14 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
 
                     {/* Show fetch error if any */}
                     {selectedNode.fetchError && (
-                      <p className="text-sm text-red-500">
+                      <p className="text-sm text-destructive">
                         <span className="font-medium">Error:</span> {selectedNode.fetchError}
                       </p>
                     )}
 
                     {selectedNode?.type === "dataset" && selectedNode.repository && (
                       <p className="text-sm flex items-center gap-1">
-                        <DatabaseIcon className="h-3.5 w-3.5 text-purple-500" />
+                        <DatabaseIcon className="h-3.5 w-3.5 text-muted-foreground" />
                         <span className="font-medium">Repository:</span> {selectedNode.repository}
                       </p>
                     )}
@@ -723,7 +723,7 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
             key={`${node.id}-${index}`}
             className={`cursor-pointer hover:shadow-md transition-shadow ${
               selectedNode?.id === node.id ? "ring-2 ring-primary" : ""
-            } ${node.isAnchor ? "bg-indigo-50 dark:bg-indigo-900/20" : ""}`}
+            } ${node.isAnchor ? "bg-primary/5" : ""}`}
             onClick={() => setSelectedNode(node)}
           >
             <CardContent className="p-3">
@@ -740,9 +740,9 @@ export function ResearchNetworkVisualization({ network }: ResearchNetworkVisuali
                       variant="outline"
                       className={`text-xs ${
                         node.statusCode >= 200 && node.statusCode < 300
-                          ? "bg-green-100 text-green-800 border-green-200"
+                          ? "bg-success/10 text-success border-success/30"
                           : node.statusCode >= 400
-                            ? "bg-red-100 text-red-800 border-red-200"
+                            ? "bg-destructive/10 text-destructive border-destructive/30"
                             : ""
                       }`}
                     >

@@ -183,15 +183,15 @@ export function BibliographicCitation({ network }: BibliographicCitationProps) {
   const getBadgeStyle = (type: string): string => {
     switch (type) {
       case "posted-content":
-        return "bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800"
+        return "bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200"
       case "journal-article":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800"
+        return "bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200"
       case "dataset":
-        return "bg-purple-100 text-purple-800 hover:bg-purple-200 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800"
+        return "bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-200"
       case "component":
-        return "bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800"
+        return "bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200"
       default:
-        return "bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-200 dark:bg-slate-900/20 dark:text-slate-400 dark:border-slate-800"
+        return "bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-200"
     }
   }
 
