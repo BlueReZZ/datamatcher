@@ -11,6 +11,7 @@ import {
   HelpCircleIcon,
   ArrowRightLeftIcon as ArrowsRightLeftIcon,
   NetworkIcon,
+  RefreshCwIcon,
 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -19,9 +20,11 @@ import Link from "next/link"
 
 interface SearchResultsProps {
   results: ArticleMatch[]
+  onForceEnhancedMatching?: () => void
+  isLoading?: boolean
 }
 
-export function SearchResults({ results }: SearchResultsProps) {
+export function SearchResults({ results, onForceEnhancedMatching, isLoading }: SearchResultsProps) {
   const shouldDisableEnhancedMatching = (results: ArticleMatch[]) => {
     return results.some((match) => match.confidenceLevel === "Very High")
   }
@@ -163,6 +166,7 @@ export function SearchResults({ results }: SearchResultsProps) {
   }
 
   const allLowConfidence = results.every((match) => match.confidenceLevel === "Low")
+  const hasDirectMatch = results.some((match) => match.confidenceLevel === "Very High")
 
   if (!results || results.length === 0) {
     return (
@@ -172,7 +176,16 @@ export function SearchResults({ results }: SearchResultsProps) {
 
   return (
     <div className="mt-6 space-y-4">
-      <h3 className="text-lg font-medium">Search Results</h3>
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="text-lg font-medium">Search Results</h3>
+
+        {hasDirectMatch && onForceEnhancedMatching && (
+          <Button variant="outline" size="sm" onClick={onForceEnhancedMatching} disabled={isLoading}>
+            <RefreshCwIcon className="mr-2 h-3.5 w-3.5" />
+            Not sure this is right? Force full matching
+          </Button>
+        )}
+      </div>
 
       {allLowConfidence && (
         <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 rounded-md mb-4 text-sm">

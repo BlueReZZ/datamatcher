@@ -48,6 +48,10 @@ export function SearchForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [results, setResults] = useState<ArticleMatch[] | null>(null)
   const [error, setError] = useState<string | null>(null)
+  // The query that produced the current `results`, kept separate from `query`
+  // (the input field) so re-running with forced enhanced matching still
+  // targets the right search even if the user has since edited the input.
+  const [searchedQuery, setSearchedQuery] = useState("")
 
   // Check if we're returning from the comparison page
   useEffect(() => {
@@ -62,6 +66,7 @@ export function SearchForm() {
         if (savedResults && savedResults.length > 0) {
           setResults(savedResults)
           setQuery(savedQuery)
+          setSearchedQuery(savedQuery)
         }
       } catch (e) {
         console.error("Error restoring search results:", e)
@@ -69,59 +74,18 @@ export function SearchForm() {
     }
   }, [])
 
-  // Update the handleSearch function to save results to sessionStorage
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!query.trim()) return
-
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const searchResults = await searchArticles(query)
-      setResults(searchResults)
-
-      // Save results to sessionStorage
-      sessionStorage.setItem("lastSearchResults", JSON.stringify(searchResults))
-      sessionStorage.setItem("lastSearchQuery", query)
-
-      if (!searchResults || searchResults.length === 0) {
-        setError("No matches found. Try a different search term.")
-      }
-    } catch (err) {
-      console.error("Search error:", err)
-
-      // Extract error message if available
-      let errorMessage = "An error occurred while searching. Please try again."
-
-      if (err instanceof Error) {
-        errorMessage = err.message
-      }
-
-      if (errorMessage.includes("OpenAI API key")) {
-        errorMessage =
-          "LLM-based matching is unavailable. Only basic matching is being used. Please configure the OpenAI API key for advanced matching."
-      } else if (errorMessage.includes("CrossRef API")) {
-        errorMessage = "Error connecting to CrossRef API. Please try again later."
-      }
-
-      setError(errorMessage)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // Function to perform a search with a specific query
-  const performSearch = async (searchQuery: string) => {
+  // Shared search runner used by the form submit, example links, and the
+  // "force full matching" re-run from the results panel.
+  const runSearch = async (searchQuery: string, options?: { forceEnhancedMatching?: boolean }) => {
     if (!searchQuery.trim()) return
 
     setIsLoading(true)
     setError(null)
 
     try {
-      const searchResults = await searchArticles(searchQuery)
+      const searchResults = await searchArticles(searchQuery, options)
       setResults(searchResults)
+      setSearchedQuery(searchQuery)
 
       // Save results to sessionStorage
       sessionStorage.setItem("lastSearchResults", JSON.stringify(searchResults))
@@ -153,6 +117,16 @@ export function SearchForm() {
     }
   }
 
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await runSearch(query)
+  }
+
+  // Function to perform a search with a specific query
+  const performSearch = async (searchQuery: string) => {
+    await runSearch(searchQuery)
+  }
+
   // Function to handle example search click
   const handleExampleClick = (exampleQuery: string) => {
     // Update the input field
@@ -162,11 +136,19 @@ export function SearchForm() {
     performSearch(exampleQuery)
   }
 
+  // Re-runs the current search but skips the direct-match short-circuit, so
+  // basic/LLM matching runs even though a direct match was already found -
+  // useful when a direct match (from CrossRef relation metadata) looks wrong.
+  const handleForceEnhancedMatching = () => {
+    runSearch(searchedQuery, { forceEnhancedMatching: true })
+  }
+
   const handleClearSearch = () => {
     setQuery("")
     setResults(null)
     setError(null)
     setIsLoading(false)
+    setSearchedQuery("")
     sessionStorage.removeItem("lastSearchResults")
     sessionStorage.removeItem("lastSearchQuery")
   }
@@ -238,7 +220,9 @@ export function SearchForm() {
 
       {error && <div className="mt-6 text-center p-4 bg-destructive/10 text-destructive rounded-md">{error}</div>}
 
-      {results && !error && <SearchResults results={results} />}
+      {results && !error && (
+        <SearchResults results={results} onForceEnhancedMatching={handleForceEnhancedMatching} isLoading={isLoading} />
+      )}
     </Card>
   )
 }

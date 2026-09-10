@@ -28,6 +28,15 @@ export interface AdvancedSearchParams {
   funderName?: string
 }
 
+// Options for searchArticles
+export interface SearchOptions {
+  // Skip the direct-match short-circuit (CrossRef relation metadata) so basic
+  // title/author matching - and LLM fuzzy matching if that's inconclusive -
+  // runs even when a direct match was found. Used to double-check a direct
+  // match that looks wrong instead of trusting it outright.
+  forceEnhancedMatching?: boolean
+}
+
 // New function to search by ORCID
 export async function searchByOrcid(orcid: string): Promise<ArticleMatch[]> {
   try {
@@ -252,7 +261,7 @@ async function enhancePublication(publication: Publication): Promise<Publication
   }
 }
 
-export async function searchArticles(query: string): Promise<ArticleMatch[]> {
+export async function searchArticles(query: string, options?: SearchOptions): Promise<ArticleMatch[]> {
   const startTime = Date.now()
 
   try {
@@ -287,24 +296,28 @@ export async function searchArticles(query: string): Promise<ArticleMatch[]> {
     console.log("Publication types in results:", finalResults.map((w) => w.type).join(", "))
 
     // Step 2: Extract direct matches from CrossRef metadata
-    try {
-      const directMatches = await extractDirectMatches(finalResults)
+    if (options?.forceEnhancedMatching) {
+      console.log("forceEnhancedMatching set - skipping direct-match short-circuit")
+    } else {
+      try {
+        const directMatches = await extractDirectMatches(finalResults)
 
-      // If we have direct matches, return them immediately
-      if (directMatches.length > 0) {
-        console.log(`Found ${directMatches.length} direct matches, returning them`)
+        // If we have direct matches, return them immediately
+        if (directMatches.length > 0) {
+          console.log(`Found ${directMatches.length} direct matches, returning them`)
 
-        // Check if we have Very High confidence matches - if so, we don't need enhanced matching
-        const hasVeryHighConfidence = directMatches.some((match) => match.confidenceLevel === "Very High")
-        if (hasVeryHighConfidence) {
-          console.log("Very High confidence matches found - enhanced matching not needed")
+          // Check if we have Very High confidence matches - if so, we don't need enhanced matching
+          const hasVeryHighConfidence = directMatches.some((match) => match.confidenceLevel === "Very High")
+          if (hasVeryHighConfidence) {
+            console.log("Very High confidence matches found - enhanced matching not needed")
+          }
+
+          return directMatches
         }
-
-        return directMatches
+      } catch (error) {
+        console.error("Error extracting direct matches:", error)
+        // Continue to basic matching if direct matching fails
       }
-    } catch (error) {
-      console.error("Error extracting direct matches:", error)
-      // Continue to basic matching if direct matching fails
     }
 
     // Step 3: Try basic title and author matching
