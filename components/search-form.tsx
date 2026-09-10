@@ -26,19 +26,19 @@ const EXAMPLE_SEARCH_GROUPS = [
     examples: ["HAMMER: Hairpin-based APOBEC3A-mediated mRNA editing reporter"],
   },
   {
-    label: "Data mapping",
-    examples: [
-      "Zinc finger homeobox-3 (ZFHX3) orchestrates genome-wide daily gene expression in the suprachiasmatic nucleus",
-      "High resolution deep mutational scanning of the melanocortin-4 receptor enables target characterization for drug discovery",
-    ],
-  },
-  {
-    label: "Medium match results",
+    label: "Medium Confidence Matches",
     examples: [
       "The genus Cortinarius should not (yet) be split",
       "Social state alters vision using three circuit mechanisms in Drosophila",
       "The E3 ubiquitin ligase mechanism specifying target-directed microRNA degradation",
       "Nuclear envelope budding is a non-canonical mechanism to export large transcripts in muscle cells",
+    ],
+  },
+  {
+    label: "Data mapping",
+    examples: [
+      "Zinc finger homeobox-3 (ZFHX3) orchestrates genome-wide daily gene expression in the suprachiasmatic nucleus",
+      "High resolution deep mutational scanning of the melanocortin-4 receptor enables target characterization for drug discovery",
     ],
   },
   {
