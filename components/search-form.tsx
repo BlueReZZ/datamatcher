@@ -30,7 +30,11 @@ const EXAMPLE_SEARCH_GROUPS = [
   },
   {
     label: "Medium match results",
-    examples: ["The genus Cortinarius should not (yet) be split", "Social state alters vision using three circuit mechanisms in Drosophila"],
+    examples: [
+      "The genus Cortinarius should not (yet) be split",
+      "Social state alters vision using three circuit mechanisms in Drosophila",
+      "The E3 ubiquitin ligase mechanism specifying target-directed microRNA degradation",
+    ],
   },
 ]
 

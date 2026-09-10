@@ -23,6 +23,7 @@ const DATA_MAPPING_EXAMPLES = [
 const MEDIUM_CONFIDENCE_EXAMPLES = [
   "The genus Cortinarius should not (yet) be split",
   "Social state alters vision using three circuit mechanisms in Drosophila",
+  "The E3 ubiquitin ligase mechanism specifying target-directed microRNA degradation",
 ]
 
 // CrossRef's public API allows ~1 request/second, and a single searchArticles()
