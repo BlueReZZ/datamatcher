@@ -42,6 +42,7 @@ const EXAMPLE_SEARCH_GROUPS = [
     examples: [
       "Ancient genomes from Ladakh reveal 2800-year-old mixture between Tibetans and South Asians",
       "Time to HIV rebound after antiretroviral therapy interruption: a double-blind randomised placebo-controlled trial of long-acting broadly neutralising antibodies; The RIO Trial",
+      "Co-opting the bacterial lipoprotein pathway for the biosynthesis of lipidated macrocyclic peptides",
     ],
   },
 ]
@@ -209,9 +210,9 @@ export function SearchForm() {
                     key={example}
                     type="button"
                     onClick={() => handleExampleClick(example)}
-                    className="text-sm text-primary hover:text-primary/80 hover:underline flex items-center"
+                    className="text-sm text-primary hover:text-primary/80 hover:underline flex items-start text-left"
                   >
-                    <ArrowRightIcon className="h-3 w-3 mr-1" />
+                    <ArrowRightIcon className="h-3 w-3 mr-1 mt-1 flex-shrink-0" />
                     <span>{example}</span>
                   </button>
                 ))}
