@@ -47,6 +47,7 @@ const EXAMPLE_SEARCH_GROUPS = [
       "Ancient genomes from Ladakh reveal 2800-year-old mixture between Tibetans and South Asians",
       "Time to HIV rebound after antiretroviral therapy interruption: a double-blind randomised placebo-controlled trial of long-acting broadly neutralising antibodies; The RIO Trial",
       "Co-opting the bacterial lipoprotein pathway for the biosynthesis of lipidated macrocyclic peptides",
+      "Discovery of cephalotaxinone enzymes reveals a whole plant model for homoharringtonine biosynthesis",
     ],
   },
 ]
