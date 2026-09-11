@@ -17,6 +17,7 @@ import {
   ShieldCheckIcon,
   AlertCircleIcon,
   AlertTriangleIcon,
+  ChevronRightIcon,
 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -247,13 +248,27 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
               key={index}
               className="overflow-hidden bg-white text-foreground hover:shadow-md transition-shadow py-0 gap-0"
             >
-              <div className={`flex items-center justify-between gap-4 px-6 py-3 ${strip.classes}`}>
-                <span className="font-semibold">Match #{index + 1}</span>
-                <span className="flex items-center gap-1.5 text-sm font-semibold">
-                  <StripIcon className="h-4 w-4" />
-                  {strip.label}
-                </span>
-              </div>
+              {showConfirmButton && comparisonUrl ? (
+                <Link
+                  href={comparisonUrl}
+                  className={`flex items-center justify-between gap-4 px-6 py-3 hover:brightness-95 transition-[filter] ${strip.classes}`}
+                >
+                  <span className="font-semibold">Match #{index + 1}</span>
+                  <span className="flex items-center gap-1.5 text-sm font-semibold">
+                    <StripIcon className="h-4 w-4" />
+                    {strip.label}
+                    <ChevronRightIcon className="h-4 w-4" />
+                  </span>
+                </Link>
+              ) : (
+                <div className={`flex items-center justify-between gap-4 px-6 py-3 ${strip.classes}`}>
+                  <span className="font-semibold">Match #{index + 1}</span>
+                  <span className="flex items-center gap-1.5 text-sm font-semibold">
+                    <StripIcon className="h-4 w-4" />
+                    {strip.label}
+                  </span>
+                </div>
+              )}
 
               <CardContent className="p-6">
                 <PublicationDetails publication={match.source} networkAction={renderNetworkAction(match.source.doi)} />
