@@ -179,19 +179,21 @@ export function BibliographicCitation({ network }: BibliographicCitationProps) {
     }
   }
 
-  // Get badge style based on type - using the same colors as in the research network visualization
+  // Get badge style based on type - matches the solid type-pill colors used
+  // for Preprint/Published Article elsewhere in the app (search results,
+  // compare page): teal for preprints, violet for articles.
   const getBadgeStyle = (type: string): string => {
     switch (type) {
       case "posted-content":
-        return "bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200"
+        return "bg-teal-600 text-white hover:bg-teal-700"
       case "journal-article":
-        return "bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200"
+        return "bg-violet-600 text-white hover:bg-violet-700"
       case "dataset":
-        return "bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-200"
+        return "bg-sky-600 text-white hover:bg-sky-700"
       case "component":
-        return "bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200"
+        return "bg-amber-600 text-white hover:bg-amber-700"
       default:
-        return "bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-200"
+        return "bg-orange-600 text-white hover:bg-orange-700"
     }
   }
 
@@ -218,8 +220,7 @@ export function BibliographicCitation({ network }: BibliographicCitationProps) {
               {anchorNode && (
                 <div className="border-b pb-4 grid grid-cols-[120px_1fr] gap-4 items-start">
                   <Badge
-                    variant="outline"
-                    className={`${getBadgeStyle(anchorNode.type)} text-base py-1 px-3 flex justify-center`}
+                    className={`${getBadgeStyle(anchorNode.type)} text-sm py-1 px-3 flex justify-center uppercase tracking-wide font-bold`}
                   >
                     {getTypeLabel(anchorNode.type)}
                   </Badge>
@@ -248,8 +249,7 @@ export function BibliographicCitation({ network }: BibliographicCitationProps) {
                   return (
                     <div key={node.id} className="pt-2 grid grid-cols-[120px_1fr] gap-4 items-start">
                       <Badge
-                        variant="outline"
-                        className={`${getBadgeStyle(node.type)} text-base py-1 px-3 flex justify-center`}
+                        className={`${getBadgeStyle(node.type)} text-sm py-1 px-3 flex justify-center uppercase tracking-wide font-bold`}
                       >
                         {getTypeLabel(node.type, node.repository)}
                       </Badge>
