@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import type { ArticleMatch, ConfidenceLevel, Publication } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -87,11 +88,17 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
     )
   }
 
-  const PublicationDetails = ({ publication }: { publication: Publication }) => {
+  const PublicationDetails = ({
+    publication,
+    networkAction,
+  }: { publication: Publication; networkAction?: ReactNode }) => {
     if (!publication || !publication.title || publication.title === "Unknown Title") {
       return (
         <div className="space-y-2">
-          <div>{getPublicationBadge(publication)}</div>
+          <div className="flex items-center justify-between gap-2">
+            {getPublicationBadge(publication)}
+            {networkAction}
+          </div>
           <div className="flex items-center gap-2">
             <HelpCircleIcon className="h-5 w-5 text-gray-500" />
             <h4 className="font-medium text-lg">Unknown Publication</h4>
@@ -117,7 +124,10 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
 
     return (
       <div className="space-y-2">
-        <div>{getPublicationBadge(publication)}</div>
+        <div className="flex items-center justify-between gap-2">
+          {getPublicationBadge(publication)}
+          {networkAction}
+        </div>
         <div className="flex items-center gap-2">
           {getPublicationIcon(publication.type)}
           <FormattedTitle title={publication.title} className="font-medium text-lg" />
@@ -216,6 +226,22 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
           const strip = getConfidenceStripInfo(match.confidenceLevel)
           const StripIcon = strip.icon
 
+          const renderNetworkAction = (doi?: string) => {
+            if (!doi) return null
+            return (
+              <Link href={`/research-network?anchor=${encodeURIComponent(doi)}&useMatching=${!disableEnhanced}`}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-auto py-1 px-2.5 gap-1 text-xs font-bold uppercase tracking-wide bg-info/10 text-info hover:bg-info/20 border-info/30"
+                >
+                  <NetworkIcon className="h-3 w-3" />
+                  View Research Network
+                </Button>
+              </Link>
+            )
+          }
+
           return (
             <Card
               key={index}
@@ -230,23 +256,7 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
               </div>
 
               <CardContent className="p-6">
-                <PublicationDetails publication={match.source} />
-
-                {match.source.doi && (
-                  <div className="mt-2 flex justify-end">
-                    <Link
-                      href={`/research-network?anchor=${encodeURIComponent(match.source.doi)}&useMatching=${!disableEnhanced}`}
-                    >
-                      <Button
-                        variant="outline"
-                        className="bg-info/10 text-info hover:bg-info/20 border-info/30"
-                      >
-                        <NetworkIcon className="mr-2 h-4 w-4" />
-                        View Research Network
-                      </Button>
-                    </Link>
-                  </div>
-                )}
+                <PublicationDetails publication={match.source} networkAction={renderNetworkAction(match.source.doi)} />
 
                 {match.match && (
                   <>
@@ -258,35 +268,22 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
                       <Separator className="flex-grow" />
                     </div>
 
-                    <PublicationDetails publication={match.match} />
-
-                    {match.match.doi && (
-                      <div className="mt-2 flex justify-end">
-                        <Link
-                          href={`/research-network?anchor=${encodeURIComponent(match.match.doi)}&useMatching=${!disableEnhanced}`}
-                        >
-                          <Button
-                            variant="outline"
-                            className="bg-info/10 text-info hover:bg-info/20 border-info/30"
-                          >
-                            <NetworkIcon className="mr-2 h-4 w-4" />
-                            View Research Network
-                          </Button>
-                        </Link>
-                      </div>
-                    )}
+                    <PublicationDetails publication={match.match} networkAction={renderNetworkAction(match.match.doi)} />
                   </>
                 )}
 
                 {showConfirmButton && comparisonUrl && (
-                  <div className="mt-4 flex justify-end gap-2">
-                    <Link href={comparisonUrl}>
-                      <Button>
-                        <ArrowsRightLeftIcon className="mr-2 h-4 w-4" />
-                        Compare Match
-                      </Button>
-                    </Link>
-                  </div>
+                  <>
+                    <Separator className="my-6" />
+                    <div className="flex justify-center">
+                      <Link href={comparisonUrl}>
+                        <Button size="lg">
+                          <ArrowsRightLeftIcon className="mr-2 h-4 w-4" />
+                          Compare Match
+                        </Button>
+                      </Link>
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
