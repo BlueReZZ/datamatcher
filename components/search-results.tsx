@@ -52,42 +52,49 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
     if (type === "preprint") {
       return <FileTextIcon className="h-5 w-5 text-teal-600" />
     } else if (type === "article") {
-      return <NewspaperIcon className="h-5 w-5 text-pink-600" />
+      return <NewspaperIcon className="h-5 w-5 text-violet-600" />
     }
     return <HelpCircleIcon className="h-5 w-5 text-muted-foreground" />
   }
 
+  // Always label preprint/article consistently (ignore CrossRef's own free-text
+  // typeLabel for these two, since its wording varies - e.g. "Journal Article"
+  // vs our "Published Article" - and only fall back to it for other types).
   const getPublicationBadge = (publication: Publication) => {
-    if (publication.typeLabel) {
+    if (publication.type === "preprint") {
       return (
-        <Badge variant="outline" className="bg-slate-100 text-slate-800 hover:bg-slate-200 border-slate-200">
-          {publication.typeLabel}
-        </Badge>
-      )
-    } else if (publication.type === "preprint") {
-      return (
-        <Badge variant="outline" className="bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200">
+        <Badge className="bg-teal-600 text-white hover:bg-teal-700 uppercase tracking-wide text-xs font-bold">
           Preprint
         </Badge>
       )
     } else if (publication.type === "article") {
       return (
-        <Badge variant="outline" className="bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200">
+        <Badge className="bg-violet-600 text-white hover:bg-violet-700 uppercase tracking-wide text-xs font-bold">
           Published Article
         </Badge>
       )
+    } else if (publication.typeLabel) {
+      return (
+        <Badge className="bg-orange-600 text-white hover:bg-orange-700 uppercase tracking-wide text-xs font-bold">
+          {publication.typeLabel}
+        </Badge>
+      )
     }
-    return <Badge variant="outline">Unknown</Badge>
+    return (
+      <Badge className="bg-orange-600 text-white hover:bg-orange-700 uppercase tracking-wide text-xs font-bold">
+        Unknown
+      </Badge>
+    )
   }
 
   const PublicationDetails = ({ publication }: { publication: Publication }) => {
     if (!publication || !publication.title || publication.title === "Unknown Title") {
       return (
         <div className="space-y-2">
+          <div>{getPublicationBadge(publication)}</div>
           <div className="flex items-center gap-2">
             <HelpCircleIcon className="h-5 w-5 text-gray-500" />
             <h4 className="font-medium text-lg">Unknown Publication</h4>
-            {getPublicationBadge(publication)}
           </div>
           {publication?.doi && (
             <p className="text-sm">
@@ -110,10 +117,10 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
 
     return (
       <div className="space-y-2">
+        <div>{getPublicationBadge(publication)}</div>
         <div className="flex items-center gap-2">
           {getPublicationIcon(publication.type)}
           <FormattedTitle title={publication.title} className="font-medium text-lg" />
-          {getPublicationBadge(publication)}
         </div>
         <p className="text-sm text-muted-foreground">
           <span className="font-medium">Authors:</span>{" "}
