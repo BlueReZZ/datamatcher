@@ -1,27 +1,22 @@
 import type { ReactNode } from "react"
-import type { ArticleMatch, ConfidenceLevel, Publication } from "@/lib/types"
-import { Badge } from "@/components/ui/badge"
+import type { ArticleMatch, Publication } from "@/lib/types"
 import { Card, CardContent } from "@/components/ui/card"
 import {
   ExternalLinkIcon,
   ArrowRightIcon,
-  FileTextIcon,
-  NewspaperIcon,
   BuildingIcon,
   BookIcon,
   HelpCircleIcon,
   ArrowRightLeftIcon as ArrowsRightLeftIcon,
   NetworkIcon,
   RefreshCwIcon,
-  CheckCircle2Icon,
-  ShieldCheckIcon,
-  AlertCircleIcon,
-  AlertTriangleIcon,
   ChevronRightIcon,
 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { FormattedTitle } from "@/components/formatted-title"
+import { PublicationTypeIcon, PublicationTypeBadge } from "@/components/publication-type"
+import { getConfidenceStripInfo } from "@/components/confidence-badge"
 import Link from "next/link"
 
 interface SearchResultsProps {
@@ -35,60 +30,6 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
     return results.some((match) => match.confidenceLevel === "Very High")
   }
 
-  const getConfidenceStripInfo = (confidence: ConfidenceLevel) => {
-    switch (confidence) {
-      case "Very High":
-        return { label: "Very High Confidence", classes: "bg-success text-success-foreground", icon: CheckCircle2Icon }
-      case "High":
-        return { label: "High Confidence", classes: "bg-info text-info-foreground", icon: ShieldCheckIcon }
-      case "Medium":
-        return { label: "Medium Confidence", classes: "bg-warning text-warning-foreground", icon: AlertCircleIcon }
-      case "Low":
-        return { label: "Low Confidence", classes: "bg-destructive text-destructive-foreground", icon: AlertTriangleIcon }
-      default:
-        return { label: "Unknown Confidence", classes: "bg-muted text-muted-foreground", icon: HelpCircleIcon }
-    }
-  }
-
-  const getPublicationIcon = (type: string) => {
-    if (type === "preprint") {
-      return <FileTextIcon className="h-5 w-5 text-teal-600" />
-    } else if (type === "article") {
-      return <NewspaperIcon className="h-5 w-5 text-violet-600" />
-    }
-    return <HelpCircleIcon className="h-5 w-5 text-muted-foreground" />
-  }
-
-  // Always label preprint/article consistently (ignore CrossRef's own free-text
-  // typeLabel for these two, since its wording varies - e.g. "Journal Article"
-  // vs our "Published Article" - and only fall back to it for other types).
-  const getPublicationBadge = (publication: Publication) => {
-    if (publication.type === "preprint") {
-      return (
-        <Badge className="bg-teal-600 text-white hover:bg-teal-700 uppercase tracking-wide text-xs font-bold">
-          Preprint
-        </Badge>
-      )
-    } else if (publication.type === "article") {
-      return (
-        <Badge className="bg-violet-600 text-white hover:bg-violet-700 uppercase tracking-wide text-xs font-bold">
-          Published Article
-        </Badge>
-      )
-    } else if (publication.typeLabel) {
-      return (
-        <Badge className="bg-orange-600 text-white hover:bg-orange-700 uppercase tracking-wide text-xs font-bold">
-          {publication.typeLabel}
-        </Badge>
-      )
-    }
-    return (
-      <Badge className="bg-orange-600 text-white hover:bg-orange-700 uppercase tracking-wide text-xs font-bold">
-        Unknown
-      </Badge>
-    )
-  }
-
   const PublicationDetails = ({
     publication,
     networkAction,
@@ -97,7 +38,7 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
       return (
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
-            {getPublicationBadge(publication)}
+            <PublicationTypeBadge publication={publication} />
             {networkAction}
           </div>
           <div className="flex items-center gap-2">
@@ -126,11 +67,11 @@ export function SearchResults({ results, onForceEnhancedMatching, isLoading }: S
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
-          {getPublicationBadge(publication)}
+          <PublicationTypeBadge publication={publication} />
           {networkAction}
         </div>
         <div className="flex items-center gap-2">
-          {getPublicationIcon(publication.type)}
+          <PublicationTypeIcon type={publication.type} />
           <FormattedTitle title={publication.title} className="font-medium text-lg" />
         </div>
         <p className="text-sm text-muted-foreground">

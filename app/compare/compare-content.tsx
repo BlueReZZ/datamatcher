@@ -4,18 +4,9 @@ import { useState, useEffect } from "react"
 import type { Publication } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import {
-  ArrowLeftIcon,
-  FileTextIcon,
-  NewspaperIcon,
-  BuildingIcon,
-  BookIcon,
-  ExternalLinkIcon,
-  CheckCircleIcon,
-  ArrowRightLeftIcon as ArrowsRightLeftIcon,
-  PercentIcon,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { ArrowLeftIcon, BuildingIcon, BookIcon, ExternalLinkIcon, CheckCircleIcon } from "lucide-react"
+import { PublicationTypeIcon, PublicationTypeBadge } from "@/components/publication-type"
+import { getConfidenceStripInfo } from "@/components/confidence-badge"
 
 // Use a regular anchor tag for back button to force a full page reload
 function BackButton() {
@@ -110,6 +101,9 @@ export function CompareContent({
     )
   }
 
+  const strip = getConfidenceStripInfo(confidenceLevel)
+  const StripIcon = strip.icon
+
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -117,63 +111,33 @@ export function CompareContent({
 
         <h1 className="text-2xl font-bold mb-6">Publication Comparison</h1>
 
-        <Card className="mb-6 bg-muted">
+        <Card className="mb-6 overflow-hidden py-0 gap-0">
+          <div className={`flex items-center gap-2 px-6 py-3 ${strip.classes}`}>
+            <StripIcon className="h-5 w-5" />
+            <span className="font-semibold">{strip.label}</span>
+          </div>
           <CardContent className="p-6">
-            <div className="flex items-center gap-2 mb-2">
-              <ArrowsRightLeftIcon className="h-5 w-5 text-info" />
-              <h2 className="text-lg font-semibold">Match Details</h2>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <PercentIcon className="h-4 w-4 text-info" />
-                <p>
-                  <span className="font-medium">Confidence Level:</span> {confidenceLevel}
-                </p>
-              </div>
-
-              <p className="text-sm text-muted-foreground">
-                {confidenceLevel === "Very High"
-                  ? "This match was found using explicit links in CrossRef metadata, indicating a direct relationship between the preprint and published article."
-                  : confidenceLevel === "High"
-                    ? "This match was determined based on high similarity between titles and authors of both publications."
-                    : confidenceLevel === "Medium"
-                      ? "This match was determined based on moderate similarity between titles and authors, but may require verification."
-                      : "This match was determined based on available metadata. The confidence level indicates how likely these publications are related."}
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              {confidenceLevel === "Very High"
+                ? "This match was found using explicit links in CrossRef metadata, indicating a direct relationship between the preprint and published article."
+                : confidenceLevel === "High"
+                  ? "This match was determined based on high similarity between titles and authors of both publications."
+                  : confidenceLevel === "Medium"
+                    ? "This match was determined based on moderate similarity between titles and authors, but may require verification."
+                    : "This match was determined based on available metadata. The confidence level indicates how likely these publications are related."}
+            </p>
           </CardContent>
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Source Publication */}
           {sourcePublication && (
-            <Card>
+            <Card className="bg-white">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
-                  {sourcePublication.type === "preprint" ? (
-                    <FileTextIcon className="h-5 w-5 text-teal-600" />
-                  ) : (
-                    <NewspaperIcon className="h-5 w-5 text-pink-600" />
-                  )}
+                  <PublicationTypeIcon type={sourcePublication.type} />
                   <CardTitle className="text-xl">
-                    {sourcePublication.type === "preprint" ? (
-                      <Badge
-                        variant="outline"
-                        className="bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200"
-                      >
-                        Preprint
-                      </Badge>
-                    ) : sourcePublication.type === "article" ? (
-                      <Badge
-                        variant="outline"
-                        className="bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200"
-                      >
-                        Published Article
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline">Unknown</Badge>
-                    )}
+                    <PublicationTypeBadge publication={sourcePublication} />
                   </CardTitle>
                 </div>
               </CardHeader>
@@ -242,32 +206,12 @@ export function CompareContent({
 
           {/* Match Publication */}
           {matchPublication && (
-            <Card>
+            <Card className="bg-white">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
-                  {matchPublication.type === "preprint" ? (
-                    <FileTextIcon className="h-5 w-5 text-teal-600" />
-                  ) : (
-                    <NewspaperIcon className="h-5 w-5 text-pink-600" />
-                  )}
+                  <PublicationTypeIcon type={matchPublication.type} />
                   <CardTitle className="text-xl">
-                    {matchPublication.type === "preprint" ? (
-                      <Badge
-                        variant="outline"
-                        className="bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200"
-                      >
-                        Preprint
-                      </Badge>
-                    ) : matchPublication.type === "article" ? (
-                      <Badge
-                        variant="outline"
-                        className="bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200"
-                      >
-                        Published Article
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline">Unknown</Badge>
-                    )}
+                    <PublicationTypeBadge publication={matchPublication} />
                   </CardTitle>
                 </div>
               </CardHeader>
